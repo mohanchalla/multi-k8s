@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: server
-                  image: krishnachalla/multi-server:v6
+                  image: krishnachalla/multi-server
                   ports:
                     - containerPort: 5000
                   env:
