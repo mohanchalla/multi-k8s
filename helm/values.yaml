@@ -1,0 +1,69 @@
+client:
+    deploymentName: client-deployment
+    replicas: 3
+    containerName: client
+    image: krishnachalla/multi-client
+    imageVersion: latest
+
+clientService:
+    name: client-cluster-ip-service
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+
+server:
+    deploymentName: server-deployment
+    replicas: 3
+    containerName: server
+    image: krishnachalla/multi-server
+    imageVersion: latest
+    env:
+        REDIS_HOST: redis-master
+        REDIS_PORT: 6379
+        PGUSER: postgres
+        PGHOST: postgres
+        PGDATABASE: postgres
+        PGPORT: 5432
+
+
+serverService:
+    name: server-cluster-ip-service
+    type: ClusterIP
+    port: 5000
+    targetPort: 5000
+
+worker:
+    name: worker-deployment
+    replicas: 1
+    containerName: worker
+    image: krishnachalla/multi-worker
+    imageVersion: latest
+    env:
+        REDIS_HOST: redis-slave
+        REDIS_PORT: 6379
+
+# Reids Configuration
+redis:
+    usePassword: false
+    fullnameOverride: redis
+    persistence: 
+        enabled: false
+    cluster:
+        slaveCount: 1
+        enabled: true
+    master:
+        size: 1Gi
+    slave:
+        size: 1Gi
+
+#Postgres Configuration
+postgresql:
+    existingSecret: pgpassword
+    fullnameOverride: postgres
+    image:
+        debug: true
+    persistence:
+        #mountPath: /var/lib/postgresql
+        #existingClaim: database-persistence-volume-claim
+        #subPath: postgres
+        size: 1Gi

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+{{- $relName := .Release.Name -}}
+{{- with .Values.server }}
+metadata:
+    name: {{ $relName }}-{{ .deploymentName }}
+spec:
+    replicas: {{ .replicas }}
+    selector:
+        matchLabels:
+            component: server
+    template:
+        metadata:
+            labels:
+                component: server
+        spec:
+            containers:
+                - name: {{ $relName }}-{{ .containerName }}
+                  image: {{ .image }}:{{ .imageVersion }}
+                  ports:
+                    - containerPort: 5000
+                  env:
+                    - name: REDIS_HOST
+                      value: {{ $.Values.redis.fullnameOverride }}-master-0.{{ $.Values.redis.fullnameOverride }}-headless.{{ $.Release.Namespace }}.svc.cluster.local
+                    - name: REDIS_PORT
+                      value: {{ .env.REDIS_PORT | quote }}
+                    - name: PGUSER
+                      value: {{ .env.PGUSER }}
+                    - name: PGHOST
+                      value: {{ .env.PGHOST }}
+                    - name: PGDATABASE
+                      value: {{ .env.PGDATABASE }}
+                    - name: PGPORT
+                      value: {{ .env.PGPORT | quote }}
+                    - name: PGPASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                            name: pgpassword
+                            key: postgresql-postgres-password
+{{- end }}

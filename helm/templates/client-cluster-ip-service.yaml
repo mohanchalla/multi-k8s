@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}-{{ .Values.clientService.name }}
+spec:
+    type: {{ .Values.clientService.type }}
+    selector:
+        component: web
+    ports:
+        - port: {{ .Values.clientService.port }}
+          targetPort: {{ .Values.clientService.targetPort }}

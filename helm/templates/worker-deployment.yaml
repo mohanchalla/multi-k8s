@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Release.Name }}-{{ .Values.worker.name }}
+spec:
+    replicas: {{ .Values.worker.replicas }}
+    selector:
+        matchLabels:
+            component: worker
+    template:
+        metadata:
+            labels:
+                component: worker
+        spec:
+            containers:
+                - name: {{ .Release.Name }}-{{ .Values.worker.containerName }}
+                  image: {{ .Values.worker.image }}:{{ .Values.worker.imageVersion }}
+                  env:
+                    - name: REDIS_HOST
+                      value: {{ .Values.redis.fullnameOverride }}-master-0.{{ .Values.redis.fullnameOverride }}-headless.{{ .Release.Namespace }}.svc.cluster.local
+                    - name: REDIS_PORT
+                      value: {{ .Values.worker.env.REDIS_PORT | quote }}

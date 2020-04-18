@@ -1,0 +1,13 @@
+apiVersion: v2
+name: multi-cluster
+description: this is a web app multi cluster
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+dependencies:
+    - name: redis
+      version: ~10.6.6
+      repository: https://charts.bitnami.com/bitnami
+    - name: postgresql
+      version: 8.7.4
+      repository: https://charts.bitnami.com/bitnami
